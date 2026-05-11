@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Menghubungkan prefix '/api/auth' dengan authRoutes
 app.use('/api/auth', authRoutes);
-
+app.use('/api/katalog', katalogRoutes); 
 // Route dasar
 app.get('/', (req, res) => {
     res.json({ message: "Welcome to DriveEase API Backend" });
