@@ -1,13 +1,31 @@
-const AuthService = require('../../service/auth/Auth.service');
+const authService = require('../../service/auth/Auth.service');
 
-const register = async (req, res) => {
+exports.register = async (req, res) => {
     try {
-        const data = await AuthService.authRegister(req.body);
-        res.status(201).json({ message: 'Registrasi staff berhasil', data });
+        const { nama, email, password } = req.body;
+        
+        // Panggil logic dari service
+        const result = await authService.registerUser(nama, email, password);
+        
+        res.status(201).json(result);
     } catch (error) {
-        if (error.message === 'Email sudah terdaftar') return res.status(400).json({ message: error.message });
-        console.error(error);
-        res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+        console.error('Error Register:', error.message);
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({ message: error.message || 'Terjadi kesalahan pada server' });
     }
 };
 
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        // Panggil logic dari service
+        const result = await authService.loginUser(email, password);
+        
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error Login:', error.message);
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).json({ message: error.message || 'Terjadi kesalahan pada server' });
+    }
+};

@@ -1,18 +1,25 @@
-const db = require('../../config/database');
+const db = require('../../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const authRegister = async (data) => {
-    const { nama, email, password } = data;
+exports.registerUser = async (nama, email, password) => {
+    // 1. Cek apakah email sudah dipakai
+    const [existingUser] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (existingUser.length > 0) {
+        const error = new Error('Email sudah terdaftar!');
+        error.statusCode = 400;
+        throw error;
+    }
 
-    const [existingUser] = await db.execute('SELECT id FROM pengguna WHERE email = ?', [email]);
-    if (existingUser.length > 0) throw new Error('Email sudah terdaftar');
+    // 2. Enkripsi password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const [result] = await db.execute(
-        `INSERT INTO pengguna (nama, email, password) VALUES (?, ?, ?)`,
+    // 3. Simpan ke database
+    await db.query(
+        'INSERT INTO users (nama, email, password) VALUES (?, ?, ?)', 
         [nama, email, hashedPassword]
     );
 
-    return { id: result.insertId, nama, email, password: hashedPassword };
+    return { message: 'Registrasi berhasil! Silakan login.' };
 };
