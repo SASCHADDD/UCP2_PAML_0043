@@ -9,7 +9,7 @@ exports.register = async (req, res) => {
         
         res.status(201).json(result);
     } catch (error) {
-        console.error('Error Register:', error.message);
+        console.error('Error Register:', error);
         const statusCode = error.statusCode || 500;
         res.status(statusCode).json({ message: error.message || 'Terjadi kesalahan pada server' });
     }
