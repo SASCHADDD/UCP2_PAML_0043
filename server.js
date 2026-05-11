@@ -3,7 +3,7 @@ const cors = require('cors');
 
 const app = express();
 const authRoutes = require('./routes/auth/Auth.route');
-
+const katalogRoutes = require('./routes/katalog/Katalog.route'); 
 // Middleware
 app.use(cors());
 app.use(express.json());
