@@ -23,3 +23,36 @@ exports.registerUser = async (nama, email, password) => {
 
     return { message: 'Registrasi berhasil! Silakan login.' };
 };
+
+// Logic untuk Login
+exports.loginUser = async (email, password) => {
+    // 1. Cari user di database
+    const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (users.length === 0) {
+        const error = new Error('Email tidak ditemukan!');
+        error.statusCode = 404;
+        throw error;
+    }
+
+    const user = users[0];
+
+    // 2. Cocokkan password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        const error = new Error('Password salah!');
+        error.statusCode = 401;
+        throw error;
+    }
+
+    // 3. Buat JWT Token
+    const token = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1d' }
+    );
+
+    return { 
+        message: 'Login berhasil!',
+        token: token 
+    };
+};
