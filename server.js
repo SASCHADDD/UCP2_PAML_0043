@@ -2,11 +2,16 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+const authRoutes = require('./routes/auth/Auth.route');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+// Menghubungkan prefix '/api/auth' dengan authRoutes
+app.use('/api/auth', authRoutes);
 
 // Route dasar
 app.get('/', (req, res) => {
