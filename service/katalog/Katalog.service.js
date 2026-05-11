@@ -14,4 +14,8 @@ exports.tambahKatalog = async (data) => {
         'INSERT INTO katalog (kategori_id, nama_kendaraan, merk, tahun, plat_nomor, harga) VALUES (?, ?, ?, ?, ?, ?)',
         [kategori_id, nama_kendaraan, merk, tahun, plat_nomor, harga]
     );
+    return { 
+        message: 'Data armada berhasil ditambahkan!', 
+        katalog_id: result.insertId 
+    };
 }
