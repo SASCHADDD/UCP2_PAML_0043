@@ -9,4 +9,9 @@ exports.tambahKatalog = async (data) => {
         error.statusCode = 400;
         throw error;
     }
+
+    const [result] = await db.query(
+        'INSERT INTO katalog (kategori_id, nama_kendaraan, merk, tahun, plat_nomor, harga) VALUES (?, ?, ?, ?, ?, ?)',
+        [kategori_id, nama_kendaraan, merk, tahun, plat_nomor, harga]
+    );
 }
