@@ -8,7 +8,6 @@ const {ploadGambar,siapkanUrlGambar,pembersihanOtomatisSaatError,pasangHelperHap
 router.get('/', katalogController.getAll);
 router.put('/:id_katalog', verifyToken, katalogController.update);
 router.delete('/:id_katalog', verifyToken, katalogController.delete);
-
 router.post('/',verifyToken,uploadGambar.single('gambar'),siapkanUrlGambar,pembersihanOtomatisSaatError,pasangHelperHapusFile,katalogController.create);
 
 module.exports = router;
