@@ -14,4 +14,28 @@ const storage = multer.diskStorage({
 
 const uploadGambar = multer({ storage: storage });
 
+const hapusFileFisik = (req, res, next) => {
+
+  if (req.file) {
+    req.fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  } else {
+    req.fileUrl = null;
+  }
+  
+  res.hapusFile = (gambarUrl) => {
+    if (gambarUrl) {
+      // Mengambil nama file dari URL (misal: http://localhost:3000/uploads/file.jpg -> file.jpg)
+      const namaFile = gambarUrl.split('/').pop();
+      const pathFile = path.join(__dirname, '../public/uploads', namaFile);
+      
+      if (fs.existsSync(pathFile)) {
+        fs.unlink(pathFile, (err) => {
+          if (err) console.error("Gagal menghapus file:", err);
+        });
+      }
+    }
+  };
+  next();
+};
+
 module.exports = uploadGambar;
