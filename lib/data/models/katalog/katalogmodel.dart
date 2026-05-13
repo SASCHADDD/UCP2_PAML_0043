@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-class KatalogModel extends Equatable {
+class KatalogModel {
   final String idKatalog;
   final String namaKendaraan;
   final String merk;
