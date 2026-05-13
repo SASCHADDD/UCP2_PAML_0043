@@ -2,40 +2,59 @@ const multer = require('multer');
 const path = require('path');
 
 // Konfigurasi penyimpanan Multer
-const storage = multer.diskStorage({
+const konfigurasiPenyimpanan = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './public/uploads/'); // Pastikan folder public/uploads/ sudah ada
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    const akhiranUnik = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, akhiranUnik + path.extname(file.originalname));
   }
 });
 
-const uploadGambar = multer({ storage: storage });
+const uploadGambar = multer({ storage: konfigurasiPenyimpanan });
 
-const hapusFileFisik = (req, res, next) => {
-
+const siapkanUrlGambar = (req, res, next) => {
   if (req.file) {
-    req.fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-  } else {
-    req.fileUrl = null;
+    req.urlGambar = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
   }
-  
-  res.hapusFile = (gambarUrl) => {
-    if (gambarUrl) {
-      // Mengambil nama file dari URL (misal: http://localhost:3000/uploads/file.jpg -> file.jpg)
-      const namaFile = gambarUrl.split('/').pop();
-      const pathFile = path.join(__dirname, '../public/uploads', namaFile);
-      
-      if (fs.existsSync(pathFile)) {
-        fs.unlink(pathFile, (err) => {
-          if (err) console.error("Gagal menghapus file:", err);
-        });
+  next();
+};
+
+// Jika Database Gagal
+const pembersihanOtomatisSaatError = (req, res, next) => {
+  const jsonAsli = res.json;
+  res.json = function (data) {
+    // Jika controller mengirim status error (>=400) dan ada file yang baru masuk, hapus filenya
+    if (res.statusCode >= 400 && req.file) {
+      const jalurFile = path.join(__dirname, '../public/uploads', req.file.filename);
+      if (fs.existsSync(jalurFile)) {
+        fs.unlinkSync(jalurFile);
+        console.log(`[Sistem] File sampah dihapus otomatis: ${req.file.filename}`);
       }
+    }
+    return jsonAsli.call(this, data);
+  };
+  next();
+};
+
+// Untuk Update/Delete)
+const pasangHelperHapusFile = (req, res, next) => {
+  res.hapusFileFisik = (url) => {
+    if (!url) return;
+    const namaFile = url.split('/').pop();
+    const jalurFile = path.join(__dirname, '../public/uploads', namaFile);
+    if (fs.existsSync(jalurFile)) {
+      fs.unlinkSync(jalurFile);
+      console.log(`[Sistem] File fisik berhasil dihapus: ${namaFile}`);
     }
   };
   next();
 };
 
-module.exports = uploadGambar;
+module.exports = {
+  uploadGambar,
+  siapkanUrlGambar,
+  pembersihanOtomatisSaatError,
+  pasangHelperHapusFile
+};
