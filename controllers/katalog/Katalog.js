@@ -2,32 +2,14 @@ const katalogService = require('../../service/katalog/Katalog.service');
 
 exports.create = async (req, res) => {
     try {
-
-    const { id_kategori, nama_kendaraan, merk, tahun, plat_nomor, harga, status } = req.body;
-    let gambarUrl = null;
-    if (req.file) {
-        gambarUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-    }        
         const result = await katalogService.tambahKatalog({
-            id_kategori,
-            nama_kendaraan,
-            merk,
-            tahun,
-            plat_nomor,
-            harga,
-            status,
-            gambar: gambarUrl
+            ...req.body,
+            gambar: req.fileUrl
         });
-
         res.status(201).json(result);
-            }
-                catch (error) {
-                console.error('Error Create Katalog:', error.message);
-        
-        const statusCode = error.statusCode || 500;
-        res.status(statusCode).json({ 
-            message: error.message || 'Terjadi kesalahan pada server' 
-        });
+    } catch (error) {
+        if (req.fileUrl) res.hapusFile(req.fileUrl);
+        res.status(error.statusCode || 500).json({ message: error.message });
     }
 };
 
