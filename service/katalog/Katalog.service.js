@@ -26,8 +26,13 @@ exports.getKatalog = async () => {
     return rows;
 }
 
+exports.getKatalogById = async (id_katalog) => {
+    const [rows] = await db.query('SELECT * FROM katalog WHERE id_katalog = ?', [id_katalog]);
+    return rows[0]; // Mengembalikan data jika ada
+};
+
 exports.updateKatalog = async (id_katalog, data) => {
-    const { id_kategori, nama_kendaraan, merk , tahun, plat_nomor,harga, status} = data;
+    const { id_kategori, nama_kendaraan, merk , tahun, plat_nomor,harga, status, gambar} = data;
 
     const [ExistingCar] = await db.query('SELECT * FROM katalog WHERE id_katalog = ?',[id_katalog]);
     if(ExistingCar.length === 0){
@@ -37,8 +42,8 @@ exports.updateKatalog = async (id_katalog, data) => {
     }
 
     await db.query(
-        'UPDATE katalog SET id_kategori = ?, nama_kendaraan = ?, merk = ?, tahun = ?, plat_nomor = ?, harga = ? WHERE id_katalog = ?',
-        [id_kategori, nama_kendaraan, merk, tahun, plat_nomor, harga, id_katalog]
+        'UPDATE katalog SET id_kategori = ?, nama_kendaraan = ?, merk = ?, tahun = ?, plat_nomor = ?, harga = ?, status = ?, gambar = ? WHERE id_katalog = ?',
+        [id_kategori, nama_kendaraan, merk, tahun, plat_nomor, harga, status, gambar, id_katalog]
     );
     return { message: 'Data mobil berhasil diperbarui!' };
 }
