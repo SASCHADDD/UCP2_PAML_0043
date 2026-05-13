@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-
+const path = require('path');
 const app = express();
 const authRoutes = require('./routes/auth/Auth.route');
 const katalogRoutes = require('./routes/katalog/Katalog.route'); 
@@ -10,10 +10,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
-// Menghubungkan prefix '/api/auth' dengan authRoutes
 app.use('/api/auth', authRoutes);
+
 app.use('/api/katalog', katalogRoutes); 
+
 app.use('/api/kategori', kategoriRoutes);
 // Route dasar
 app.get('/', (req, res) => {
