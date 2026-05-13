@@ -28,4 +28,5 @@ class UserModel extends Equatable {
     email,
     password
     ];
+    
 }
