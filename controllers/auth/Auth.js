@@ -29,3 +29,12 @@ exports.login = async (req, res) => {
         res.status(statusCode).json({ message: error.message || 'Terjadi kesalahan pada server' });
     }
 };
+
+exports.logout = async (req, res) => {
+    try {
+        res.status(200).json({ message: 'Logout berhasil!' });
+    } catch (error) {
+        console.error('Error Logout:', error.message);
+        res.status(500).json({ message: 'Terjadi kesalahan pada server' });
+    }
+};
