@@ -75,15 +75,13 @@ class AuthRepository {
 
   Future<void> logout() async {
   try {
-    // 1. Ambil token yang sedang aktif
     final token = await _storage.read(key: 'jwt_token');
 
-    // 2. Panggil API logout di backend
     final response = await http.post(
       Uri.parse("$baseUrl/logout"),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Kirim token agar server tahu siapa yang logout
+        'Authorization': 'Bearer $token', 
       },
     );
 
@@ -91,10 +89,8 @@ class AuthRepository {
        print("Berhasil logout dari server");
     }
   } catch (e) {
-    // Tetap lanjut hapus token lokal meskipun server gagal/offline
     print("Gagal panggil API logout: $e");
   } finally {
-    // 3. Apapun yang terjadi, hapus token di lokal HP
     await deleteToken();
   }
 }
