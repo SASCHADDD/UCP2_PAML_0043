@@ -4,6 +4,7 @@ import 'package:drive_ease/data/repositories/kategori/kategori_repository.dart';
 import 'package:drive_ease/logic/bloc/auth/auth_bloc.dart';
 import 'package:drive_ease/logic/bloc/katalog/katalog_bloc.dart';
 import 'package:drive_ease/logic/bloc/kategori/kategori_bloc.dart';
+import 'package:drive_ease/ui/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,11 +39,11 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
         debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Drive_Ease',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LoginScreen(),
+      home: const LoginPage(),
         ),
       ),
     );
