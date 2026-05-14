@@ -6,6 +6,7 @@ class KatalogModel {
   final String platNomor;
   final String harga;
   final String status;
+  final String? gambar;
 
   KatalogModel({
     required this.idKatalog,
@@ -15,6 +16,7 @@ class KatalogModel {
     required this.platNomor,
     required this.harga,
     required this.status,
+    this.gambar
   });
 
   factory KatalogModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +27,8 @@ class KatalogModel {
       tahun: json['tahun'],
       platNomor: json ['platNomor'],
       harga: json ['harga'],
-      status: json['status']
+      status: json['status'],
+      gambar: json['gambar']
     );
   }
 }
