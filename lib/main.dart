@@ -1,4 +1,11 @@
+import 'package:drive_ease/data/repositories/auth/auth_repository.dart';
+import 'package:drive_ease/data/repositories/katalog/katalog_repository.dart';
+import 'package:drive_ease/data/repositories/kategori/kategori_repository.dart';
+import 'package:drive_ease/logic/bloc/auth/auth_bloc.dart';
+import 'package:drive_ease/logic/bloc/katalog/katalog_bloc.dart';
+import 'package:drive_ease/logic/bloc/kategori/kategori_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,27 +17,34 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(create: (context) => AuthRepository()),
+        RepositoryProvider(create: (context) => KatalogRepository()),
+        RepositoryProvider(create: (context) => KategoriRepository()),
+      ],
+      // Daftarkan semua BLoC dan hubungkan dengan Repository-nya
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthBloc(authRepository: context.read<AuthRepository>()),
+          ),
+          BlocProvider(
+            create: (context) => KatalogBloc(repository: context.read<KatalogRepository>()),
+          ),
+          BlocProvider(
+            create: (context) => KategoriBloc(repository: context.read<KategoriRepository>()),
+          ),
+        ],
+        child: MaterialApp(
+        debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const LoginScreen(),
+        ),
+      ),
     );
   }
 }
