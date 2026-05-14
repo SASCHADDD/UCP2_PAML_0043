@@ -79,6 +79,40 @@ class _TambahKatalogPageState extends State<TambahKatalogPage> {
     }
   }
 
+  void _showTambahKategoriDialog() {
+    final TextEditingController kategoriController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Tambah Kategori Baru'),
+          content: TextField(
+            controller: kategoriController,
+            decoration: const InputDecoration(labelText: 'Nama Kategori'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (kategoriController.text.isNotEmpty) {
+                  context.read<KategoriBloc>().add(CreateKategori(kategoriController.text));
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Kategori sedang ditambahkan...')),
+                  );
+                }
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,15 +139,29 @@ class _TambahKatalogPageState extends State<TambahKatalogPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Kategori', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    TextButton.icon(
+                      onPressed: _showTambahKategoriDialog,
+                      icon: const Icon(Icons.add),
+                      label: const Text('Tambah Kategori'),
+                    ),
+                  ],
+                ),
                 // Dropdown Kategori
                 BlocBuilder<KategoriBloc, KategoriState>(
                   builder: (context, state) {
-                    if (state is KategoriLoading) {
+                    if (state is KategoriLoading || state is KategoriInitial || state is KategoriActionSuccess) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is KategoriLoaded) {
                       final kategoriList = state.kategoriList;
+                      if (kategoriList.isEmpty) {
+                        return const Text('Belum ada kategori, silakan tambah dulu.');
+                      }
                       return DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(labelText: 'Kategori'),
+                        decoration: const InputDecoration(hintText: 'Pilih Kategori'),
                         value: _selectedKategoriId,
                         items: kategoriList.map<DropdownMenuItem<String>>((kategori) {
                           return DropdownMenuItem<String>(
@@ -128,6 +176,8 @@ class _TambahKatalogPageState extends State<TambahKatalogPage> {
                         },
                         validator: (value) => value == null ? 'Pilih Kategori' : null,
                       );
+                    } else if (state is KategoriError) {
+                      return Text('Gagal memuat kategori: ${state.message}', style: const TextStyle(color: Colors.red));
                     } else {
                       return const Text('Gagal memuat kategori');
                     }
