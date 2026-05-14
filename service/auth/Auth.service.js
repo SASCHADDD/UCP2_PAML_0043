@@ -17,7 +17,7 @@ exports.registerUser = async (nama, email, password) => {
 
     // 3. Simpan ke database
     await db.query(
-        'INSERT INTO users (nama, email, password) VALUES (?, ?, ?)', 
+        'INSERT INTO users (nama, email, password) VALUES (?, ?, ?)',
         [nama, email, hashedPassword]
     );
 
@@ -51,8 +51,13 @@ exports.loginUser = async (email, password) => {
         { expiresIn: '1d' }
     );
 
-    return { 
+    return {
         message: 'Login berhasil!',
-        token: token 
+        token: token,
+        user: {
+            id: user.id,
+            nama: user.nama,
+            email: user.email
+        }
     };
 };

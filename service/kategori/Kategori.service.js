@@ -3,20 +3,20 @@ const db = require('../../config/db');
 exports.tambahKategori = async (data) => {
     const { id_kategori, nama_kategori } = data;
 
-    const [ExistingCategory] = await db.query('SELECT * FROM kategori WHERE nama_kategori = ?',[nama_kategori]);
-    if(ExistingCategory.length>0){
+    const [ExistingCategory] = await db.query('SELECT * FROM kategori WHERE nama_kategori = ?', [nama_kategori]);
+    if (ExistingCategory.length > 0) {
         const error = new Error('Kategori sudah terdaftar!');
         error.statusCode = 400;
         throw error;
     }
 
     const [result] = await db.query(
-        'INSERT INTO kategori (id_kategori, nama_kategori) VALUES (?, ?)',
-        [id_kategori, nama_kategori]
+        'INSERT INTO kategori (nama_kategori) VALUES (?)',
+        [nama_kategori]
     );
-    return { 
-        message: 'Data kategori berhasil ditambahkan!', 
-        id_kategori: result.insertId 
+    return {
+        message: 'Data kategori berhasil ditambahkan!',
+        id_kategori: result.insertId
     };
 }
 
@@ -28,8 +28,8 @@ exports.getKategori = async () => {
 exports.updateKategori = async (id_kategori, data) => {
     const { nama_kategori } = data;
 
-    const [ExistingCategory] = await db.query('SELECT * FROM kategori WHERE id_kategori = ?',[id_kategori]);
-    if(ExistingCategory.length === 0){
+    const [ExistingCategory] = await db.query('SELECT * FROM kategori WHERE id_kategori = ?', [id_kategori]);
+    if (ExistingCategory.length === 0) {
         const error = new Error('Kategori tidak ditemukan!');
         error.statusCode = 404;
         throw error;
@@ -43,8 +43,8 @@ exports.updateKategori = async (id_kategori, data) => {
 }
 
 exports.deleteKategori = async (id_kategori) => {
-    const [ExistingCategory] = await db.query('SELECT * FROM kategori WHERE id_kategori = ?',[id_kategori]);
-    if(ExistingCategory.length === 0){
+    const [ExistingCategory] = await db.query('SELECT * FROM kategori WHERE id_kategori = ?', [id_kategori]);
+    if (ExistingCategory.length === 0) {
         const error = new Error('Kategori tidak ditemukan!');
         error.statusCode = 404;
         throw error;
