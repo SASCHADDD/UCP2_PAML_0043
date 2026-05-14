@@ -2,6 +2,7 @@ import 'package:drive_ease/data/repositories/auth/auth_repository.dart';
 import 'package:drive_ease/logic/bloc/katalog/katalog_bloc.dart';
 import 'package:drive_ease/logic/bloc/katalog/katalog_event.dart';
 import 'package:drive_ease/logic/bloc/katalog/katalog_state.dart';
+import 'package:drive_ease/ui/pages/editkatalog_page.dart';
 import 'package:drive_ease/ui/pages/login_page.dart';
 import 'package:drive_ease/ui/pages/tambahkatalog_page.dart';
 import 'package:flutter/material.dart';
@@ -106,6 +107,49 @@ class _HomePageState extends State<HomePage> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Colors.blue),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditKatalogPage(mobil: mobil),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Hapus Mobil'),
+                                        content: const Text('Apakah Anda yakin ingin menghapus mobil ini?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            child: const Text('Batal'),
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              context.read<KatalogBloc>().add(DeleteKatalog(mobil['id_katalog'].toString()));
+                                            },
+                                            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),
