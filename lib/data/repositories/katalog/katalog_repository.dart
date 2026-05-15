@@ -18,9 +18,7 @@ class KatalogRepository {
     try {
       final response = await http.get(
         Uri.parse(baseUrl),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
 
       developer.log('Response Get Katalog: ${response.body}', name: 'API');
@@ -38,7 +36,10 @@ class KatalogRepository {
   }
 
   // --- Tambah Katalog Baru (Dengan Upload Gambar) ---
-  Future<void> createKatalog(Map<String, String> fields, File gambarFile) async {
+  Future<void> createKatalog(
+    Map<String, String> fields,
+    File gambarFile,
+  ) async {
     try {
       final token = await _getToken();
       var request = http.MultipartRequest('POST', Uri.parse(baseUrl));
@@ -53,10 +54,9 @@ class KatalogRepository {
       request.fields.addAll(fields);
 
       // Menambahkan file gambar fisik
-      request.files.add(await http.MultipartFile.fromPath(
-        'gambar', 
-        gambarFile.path
-      ));
+      request.files.add(
+        await http.MultipartFile.fromPath('gambar', gambarFile.path),
+      );
 
       // Mengirim request
       var streamedResponse = await request.send();
@@ -75,10 +75,17 @@ class KatalogRepository {
   }
 
   // --- Update Katalog (Gambar Opsional) ---
-  Future<void> updateKatalog(String idKatalog, Map<String, String> fields, File? gambarBaru) async {
+  Future<void> updateKatalog(
+    String idKatalog,
+    Map<String, String> fields,
+    File? gambarBaru,
+  ) async {
     try {
       final token = await _getToken();
-      var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/$idKatalog'));
+      var request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$baseUrl/$idKatalog'),
+      );
 
       request.headers.addAll({
         'Authorization': 'Bearer $token',
@@ -89,7 +96,9 @@ class KatalogRepository {
 
       // Hanya tambahkan file jika user memilih gambar baru di UI
       if (gambarBaru != null) {
-        request.files.add(await http.MultipartFile.fromPath('gambar', gambarBaru.path));
+        request.files.add(
+          await http.MultipartFile.fromPath('gambar', gambarBaru.path),
+        );
       }
 
       var streamedResponse = await request.send();
